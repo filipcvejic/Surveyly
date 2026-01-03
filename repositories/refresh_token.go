@@ -2,24 +2,24 @@ package repositories
 
 import (
 	"context"
-	sqlc2 "github.com/filipcvejic/surveyly/db/sqlc"
+	"github.com/filipcvejic/surveyly/db/sqlc"
 	"github.com/google/uuid"
 	"time"
 )
 
 type RefreshTokenRepository struct {
-	queries *sqlc2.Queries
+	queries *sqlc.Queries
 }
 
-func NewRefreshTokenRepository(queries *sqlc2.Queries) *RefreshTokenRepository {
+func NewRefreshTokenRepository(queries *sqlc.Queries) *RefreshTokenRepository {
 	return &RefreshTokenRepository{queries: queries}
 }
 
-func (r *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, userID uuid.UUID, ttl time.Duration) (sqlc2.RefreshToken, error) {
+func (r *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, userID uuid.UUID, ttl time.Duration) (sqlc.RefreshToken, error) {
 	tokenID := uuid.New()
 	expiresAt := time.Now().Add(ttl)
 
-	return r.queries.CreateRefreshToken(ctx, sqlc2.CreateRefreshTokenParams{
+	return r.queries.CreateRefreshToken(ctx, sqlc.CreateRefreshTokenParams{
 		ID:        tokenID,
 		UserID:    userID,
 		Token:     tokenID.String(),
@@ -29,7 +29,7 @@ func (r *RefreshTokenRepository) CreateRefreshToken(ctx context.Context, userID 
 	})
 }
 
-func (r *RefreshTokenRepository) GetRefreshToken(ctx context.Context, tokenString string) (sqlc2.RefreshToken, error) {
+func (r *RefreshTokenRepository) GetRefreshToken(ctx context.Context, tokenString string) (sqlc.RefreshToken, error) {
 	return r.queries.GetRefreshToken(ctx, tokenString)
 }
 
