@@ -44,6 +44,7 @@ func main() {
 
 	r.Post("/api/auth/register", authHandler.Register)
 	r.Post("/api/auth/login", authHandler.Login)
+	r.Post("/api/auth/refresh", authHandler.RefreshToken)
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.AuthenticationMiddleware(authService))
