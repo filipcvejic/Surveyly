@@ -5,11 +5,56 @@
 package sqlc
 
 import (
+	"database/sql/driver"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
+
+type QuestionType string
+
+const (
+	QuestionTypeText           QuestionType = "text"
+	QuestionTypeSingleChoice   QuestionType = "single_choice"
+	QuestionTypeMultipleChoice QuestionType = "multiple_choice"
+)
+
+func (e *QuestionType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = QuestionType(s)
+	case string:
+		*e = QuestionType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for QuestionType: %T", src)
+	}
+	return nil
+}
+
+type NullQuestionType struct {
+	QuestionType QuestionType `json:"question_type"`
+	Valid        bool         `json:"valid"` // Valid is true if QuestionType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullQuestionType) Scan(value interface{}) error {
+	if value == nil {
+		ns.QuestionType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.QuestionType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullQuestionType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.QuestionType), nil
+}
 
 type RefreshToken struct {
 	ID        uuid.UUID `db:"id" json:"id"`
@@ -18,6 +63,24 @@ type RefreshToken struct {
 	ExpiresAt time.Time `db:"expires_at" json:"expires_at"`
 	CreatedAt time.Time `db:"created_at" json:"created_at"`
 	Revoked   bool      `db:"revoked" json:"revoked"`
+}
+
+type Survey struct {
+	ID          uuid.UUID   `db:"id" json:"id"`
+	OwnerID     uuid.UUID   `db:"owner_id" json:"owner_id"`
+	Title       string      `db:"title" json:"title"`
+	Description string      `db:"description" json:"description"`
+	PublicID    string      `db:"public_id" json:"public_id"`
+	IsActive    bool        `db:"is_active" json:"is_active"`
+	CreatedAt   interface{} `db:"created_at" json:"created_at"`
+}
+
+type SurveyQuestion struct {
+	ID           uuid.UUID    `db:"id" json:"id"`
+	SurveyID     uuid.UUID    `db:"survey_id" json:"survey_id"`
+	QuestionText string       `db:"question_text" json:"question_text"`
+	QuestionType QuestionType `db:"question_type" json:"question_type"`
+	CreatedAt    time.Time    `db:"created_at" json:"created_at"`
 }
 
 type User struct {
