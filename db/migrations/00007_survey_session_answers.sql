@@ -2,10 +2,9 @@
 -- +goose StatementBegin
 CREATE TABLE survey_answers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    response_id UUID NOT NULL REFERENCES survey_responses(id) ON DELETE CASCADE,
+    session_id UUID NOT NULL REFERENCES survey_sessions(id) ON DELETE CASCADE,
     question_id UUID NOT NULL REFERENCES survey_questions(id) ON DELETE CASCADE,
-    answer_text TEXT,
-    answer_numeric INT,
+    answer TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     UNIQUE(response_id, question_id)

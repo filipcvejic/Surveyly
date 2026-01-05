@@ -12,8 +12,8 @@ CREATE TABLE survey_questions (
     survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
     question_text TEXT NOT NULL,
     question_type question_type NOT NULL,
+    index INT NOT NULL,
     required BOOLEAN NOT NULL DEFAULT FALSE,
-    position INT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               
     UNIQUE(survey_id, position)

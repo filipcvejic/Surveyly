@@ -3,7 +3,7 @@
 CREATE TABLE survey_responses (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-    respondent_id UUID,
+    user_id UUID,
     ip_address INET,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
