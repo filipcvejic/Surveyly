@@ -9,7 +9,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createSurvey = `-- name: CreateSurvey :one
@@ -25,7 +24,7 @@ type CreateSurveyParams struct {
 	ID          uuid.UUID   `db:"id" json:"id"`
 	OwnerID     uuid.UUID   `db:"owner_id" json:"owner_id"`
 	Title       string      `db:"title" json:"title"`
-	Description pgtype.Text `db:"description" json:"description"`
+	Description string      `db:"description" json:"description"`
 	PublicID    string      `db:"public_id" json:"public_id"`
 	IsActive    bool        `db:"is_active" json:"is_active"`
 	CreatedAt   interface{} `db:"created_at" json:"created_at"`
@@ -52,4 +51,57 @@ func (q *Queries) CreateSurvey(ctx context.Context, arg CreateSurveyParams) (Sur
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getSurveyByID = `-- name: GetSurveyByID :one
+SELECT id, owner_id, title, description, public_id, is_active, created_at FROM surveys
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetSurveyByID(ctx context.Context, id uuid.UUID) (Survey, error) {
+	row := q.db.QueryRow(ctx, getSurveyByID, id)
+	var i Survey
+	err := row.Scan(
+		&i.ID,
+		&i.OwnerID,
+		&i.Title,
+		&i.Description,
+		&i.PublicID,
+		&i.IsActive,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
+const getSurveysByOwnerID = `-- name: GetSurveysByOwnerID :many
+SELECT id, owner_id, title, description, public_id, is_active, created_at FROM surveys
+WHERE owner_id = $1
+`
+
+func (q *Queries) GetSurveysByOwnerID(ctx context.Context, ownerID uuid.UUID) ([]Survey, error) {
+	rows, err := q.db.Query(ctx, getSurveysByOwnerID, ownerID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Survey
+	for rows.Next() {
+		var i Survey
+		if err := rows.Scan(
+			&i.ID,
+			&i.OwnerID,
+			&i.Title,
+			&i.Description,
+			&i.PublicID,
+			&i.IsActive,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

@@ -12,8 +12,11 @@ sql:
         emit_db_tags: true
         overrides:
           - db_type: "timestamptz"
-            go_type: "time.Time"
             nullable: false
+            go_type: "time.Time"
+          - db_type: "text"
+            nullable: true
+            go_type: "string"
           - db_type: "uuid"
             nullable: false
             go_type:
