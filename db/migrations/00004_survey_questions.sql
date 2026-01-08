@@ -10,18 +10,15 @@ CREATE TYPE question_type AS ENUM (
 CREATE TABLE survey_questions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
-    question_text TEXT NOT NULL,
-    question_type question_type NOT NULL,
-    index INT NOT NULL,
-    required BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                              
-    UNIQUE(survey_id, position)
-)
+    text TEXT NOT NULL,
+    type question_type NOT NULL,
+    is_required BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 DROP TABLE survey_questions;
-DROP TYPE question_type
+DROP TYPE question_type;
 -- +goose StatementEnd

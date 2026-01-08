@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE survey_responses (
+CREATE TABLE survey_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     survey_id UUID NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
     user_id UUID,
@@ -13,5 +13,5 @@ CREATE TABLE survey_responses (
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE survey_responses
+DROP TABLE survey_sessions
 -- +goose StatementEnd
