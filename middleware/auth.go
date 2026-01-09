@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"context"
-	"github.com/filipcvejic/surveyly/auth"
+	"github.com/filipcvejic/surveyly/internal/auth"
 	"github.com/google/uuid"
 	"net/http"
 	"strings"
@@ -50,7 +50,7 @@ func AuthenticationMiddleware(authService *auth.AuthService) func(http.Handler) 
 			}
 
 			ctx := context.WithValue(r.Context(), UserIDKey, userID)
-			
+
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

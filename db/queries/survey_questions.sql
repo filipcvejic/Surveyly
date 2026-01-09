@@ -1,23 +1,29 @@
--- name: CreateQuestion :one
+-- name: CreateSurveyQuestion :one
 INSERT INTO survey_questions (
-    id, survey_id, question_text, question_type, required, position, created_at               
+    id, survey_id, text, type, is_required, created_at               
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7  
+    $1, $2, $3, $4, $5, $6 
 ) RETURNING *;
 
--- name: GetQuestion :one
+-- name: GetSurveyQuestion :one
 SELECT * FROM survey_questions
 WHERE id = $1;
 
--- name: ListQuestions :many
+-- name: ListSurveyQuestions :many
 SELECT * FROM survey_questions
-WHERE survey_id = $1
-ORDER BY position ASC;
+WHERE survey_id = $1;
 
--- name: ListRequiredQuestions :many
+-- name: ListRequiredSurveyQuestions :many
 SELECT * FROM survey_questions
-WHERE survey_id = $1 AND required = true
-ORDER BY position ASC;
+WHERE survey_id = $1 AND is_required = true;
+
+-- name: UpdateSurveyQuestion :exec
+UPDATE survey_questions
+SET
+    text = $2,
+    type = $3,
+    is_required = $4
+WHERE id = $1;
 
 -- name: DeleteQuestion :exec
 DELETE FROM survey_questions
