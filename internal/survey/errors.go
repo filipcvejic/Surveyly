@@ -9,5 +9,5 @@ var (
 	ErrRatingMaxRequired   = errors.New("rating_max required for rating questions")
 	ErrInvalidRatingMax    = errors.New("invalid rating_max value")
 	ErrInvalidOwner        = errors.New("invalid owner")
-	ErrSurveyNotFound      = errors.New("survey not found")
+	ErrSurveygiNotFound    = errors.New("survey not found")
 )

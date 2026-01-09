@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"github.com/filipcvejic/surveyly/auth"
+	"github.com/filipcvejic/surveyly/internal/auth"
 	"net/http"
 )
 
