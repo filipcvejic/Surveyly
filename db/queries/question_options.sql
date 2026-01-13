@@ -14,7 +14,7 @@ INSERT INTO survey_question_options (
 
 -- name: ListQuestionOptions :many
 SELECT * FROM survey_question_options
-WHERE question_id = $1;
+WHERE question_id = ANY($1::uuid[]);
 
 -- name: UpdateQuestionOption :exec
 UPDATE survey_question_options

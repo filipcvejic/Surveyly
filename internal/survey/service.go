@@ -2,6 +2,7 @@ package survey
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 )
 
@@ -82,18 +83,10 @@ func (s *Service) CreateSurveyWithQuestions(
 	return survey, nil
 }
 
-func (s *Service) GetSurveyByID(ctx context.Context, id uuid.UUID) (*Survey, error) {
-	if id == uuid.Nil {
-		return nil, ErrSurveyNotFound
-	}
-
-	survey, err := s.repo.FindByID(ctx, id)
+func (s *Service) GetSurveyDetails(ctx context.Context, surveyID uuid.UUID) (*Survey, error) {
+	survey, err := s.repo.GetByIDWithDetails(ctx, surveyID)
 	if err != nil {
-		return nil, err
-	}
-
-	if survey == nil {
-		return nil, ErrSurveyNotFound
+		return nil, fmt.Errorf("failed to get survey: %w", err)
 	}
 
 	return survey, nil

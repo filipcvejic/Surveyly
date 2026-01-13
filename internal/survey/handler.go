@@ -51,11 +51,13 @@ func (h *Handler) GetSurveyByID(w http.ResponseWriter, r *http.Request) {
 	surveyID, err := uuid.Parse(surveyIDStr)
 	if err != nil {
 		http.Error(w, "invalid survey id", 400)
+		return
 	}
 
-	survey, err := h.service.GetSurveyByID(r.Context(), surveyID)
+	survey, err := h.service.GetSurveyDetails(r.Context(), surveyID)
 	if err != nil {
-		http.Error(w, "", 400)
+		http.Error(w, err.Error(), 400) // Return actual error to see what's wrong
+		return
 	}
 
 	httpx.WriteJSON(w, http.StatusOK, ToSurveyResponse(survey))
