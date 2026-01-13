@@ -10,30 +10,29 @@ RETURNING *;
 SELECT * FROM surveys
 WHERE id = $1 LIMIT 1;
 
--- name: GetSurveyFullByID :many
+-- name: GetSurveyWithQuestionsAndOptions :many
 SELECT
-    s.id            AS survey_id,
-    s.owner_id,
-    s.title,
-    s.description,
-    s.public_id,
-    s.is_active,
-
-    q.id            AS question_id,
-    q.text          AS question_text,
-    q.type          AS question_type,
-    q.is_required,
-    q.rating_max,
-
-    o.id            AS option_id,
-    o.text          AS option_text
-
+    s.id as survey_id,
+    s.owner_id as survey_owner_id,
+    s.title as survey_title,
+    s.description as survey_description,
+    s.public_id as survey_public_id,
+    s.is_active as survey_is_active,
+    s.created_at as survey_created_at,
+    s.updated_at as survey_updated_at,
+    sq.id as question_id,
+    sq.text as question_text,
+    sq.type as question_type,
+    sq.is_required as question_is_required,
+    sq.created_at as question_created_at,
+    sqo.id as option_id,
+    COALESCE(sqo.text, '') as option_text,
+    sqo.created_at as option_created_at
 FROM surveys s
-         LEFT JOIN survey_questions q
-                   ON q.survey_id = s.id
-         LEFT JOIN survey_question_options o
-                   ON o.question_id = q.id
-WHERE s.id = $1;
+LEFT JOIN survey_questions sq ON s.id = sq.survey_id
+LEFT JOIN survey_question_options sqo ON sq.id = sqo.question_id
+WHERE s.id = $1
+ORDER BY sq.created_at, sqo.created_at;
 
 -- name: ListSurveysByOwner :many
 SELECT * FROM surveys

@@ -27,6 +27,7 @@ func ToSurveyResponse(s *Survey) SurveyResponse {
 
 	return SurveyResponse{
 		ID:          s.ID,
+		OwnerID:     s.OwnerID,
 		Title:       s.Title,
 		Description: s.Description,
 		IsActive:    s.IsActive,

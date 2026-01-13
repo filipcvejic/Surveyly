@@ -56,7 +56,7 @@ func main() {
 
 		r.Get("/profile", userHandler.Profile)
 		r.Post("/surveys", surveyHandler.CreateSurvey)
-		r.Get("/surveys/:id", surveyHandler.GetSurveyByID)
+		r.Get("/surveys/{id}", surveyHandler.GetSurveyByID)
 	})
 
 	port := os.Getenv("PORT")
